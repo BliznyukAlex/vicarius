@@ -46,7 +46,7 @@ jobs:
 
     - name: Deploy the New JAR
       run: |
-        scp -i ~/.ssh/private.key target/exam-0.0.1-SNAPSHOT.jar ec2-user@51.20.85.15:/home
+        scp -i ~/.ssh/private.key target/exam-0.0.1-SNAPSHOT.jar ec2-user@51.20.85.15:/home/ec2-user/
         
     - name: Start the New Application in Background
       run: |
