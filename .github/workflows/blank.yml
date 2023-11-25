@@ -18,7 +18,7 @@ jobs:
       run: |
         mkdir -p $HOME/.ssh
         touch $HOME/.ssh/known_hosts
-        ssh-keyscan -t ecdsa,rsa,ed25519 13.49.67.182 >> $HOME/.ssh/known_hosts
+        ssh-keyscan -t ecdsa,rsa,ed25519 51.20.85.15 >> $HOME/.ssh/known_hosts
 
     # - name: Create config.properties
     #   run: |
@@ -34,20 +34,20 @@ jobs:
 
     - name: Stop the Old Application
       run: |
-        if ssh -i ~/.ssh/private.key ubuntu@13.49.67.182 "pgrep -f exam-0.0.1-SNAPSHOT.jar" > /dev/null; then
-          ssh -i ~/.ssh/private.key ubuntu@13.49.67.182 "pkill -f exam-0.0.1-SNAPSHOT.jar"
+        if ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "pgrep -f exam-0.0.1-SNAPSHOT.jar" > /dev/null; then
+          ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "pkill -f exam-0.0.1-SNAPSHOT.jar"
         else
           echo "Process not found, no need to stop."
         fi
 
     - name: Remove Old JAR
       run: |
-        ssh -i ~/.ssh/private.key ubuntu@13.49.67.182 "rm -f /home/project/exam-0.0.1-SNAPSHOT.jar"
+        ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "rm -f /home/project/exam-0.0.1-SNAPSHOT.jar"
 
     - name: Deploy the New JAR
       run: |
-        scp -i ~/.ssh/private.key target/exam-0.0.1-SNAPSHOT.jar ubuntu@13.49.67.182:/home/ubuntu/
+        scp -i ~/.ssh/private.key target/exam-0.0.1-SNAPSHOT.jar ec2-user@51.20.85.15:/home/ubuntu/
         
     - name: Start the New Application in Background
       run: |
-        ssh -i ~/.ssh/private.key ubuntu@13.49.67.182 "nohup java -jar /home/ubuntu/exam-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
+        ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "nohup java -jar /home/ubuntu/exam-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
