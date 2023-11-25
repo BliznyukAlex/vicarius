@@ -20,13 +20,13 @@ jobs:
         touch $HOME/.ssh/known_hosts
         ssh-keyscan -t ecdsa,rsa,ed25519 3.70.99.247 >> $HOME/.ssh/known_hosts
 
-    - name: Create config.properties
-      run: |
-        echo "${{ secrets.CONFIG_PROPERTIES }}" > src/main/resources/config.properties
+    # - name: Create config.properties
+    #   run: |
+    #     echo "${{ secrets.CONFIG_PROPERTIES }}" > src/main/resources/config.properties
 
     - name: Build with Maven
       run: |
-        mvn clean install -DskipTests -Dconfig.file=src/main/resources/config.properties
+        mvn clean install -DskipTests -Dconfig.file=src/main/resources/application.properties
         mkdir -p ~/.ssh/
         echo "${{ secrets.SSH_SECRET_KEY }}" > ~/.ssh/private.key
         chmod 600 ~/.ssh/private.key
