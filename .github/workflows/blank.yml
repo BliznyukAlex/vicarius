@@ -42,7 +42,7 @@ jobs:
 
     - name: Remove Old JAR
       run: |
-        ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "rm -f /home/project/exam-0.0.1-SNAPSHOT.jar"
+        ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "rm -f /home/exam-0.0.1-SNAPSHOT.jar"
 
     - name: Deploy the New JAR
       run: |
