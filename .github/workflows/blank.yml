@@ -1,0 +1,53 @@
+on: [push]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Create home directory and known_hosts
+      run: |
+        mkdir -p $HOME/.ssh
+        touch $HOME/.ssh/known_hosts
+        ssh-keyscan -t ecdsa,rsa,ed25519 3.66.171.180 >> $HOME/.ssh/known_hosts
+
+    - name: Create config.properties
+      run: |
+        echo "${{ secrets.CONFIG_PROPERTIES }}" > src/main/resources/config.properties
+
+    - name: Build with Maven
+      run: |
+        mvn clean install -DskipTests -Dconfig.file=src/main/resources/config.properties
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_SECRET_KEY }}" > ~/.ssh/private.key
+        chmod 600 ~/.ssh/private.key
+
+
+    - name: Stop the Old Application
+      run: |
+        if ssh -i ~/.ssh/private.key ubuntu@3.66.171.180 "pgrep -f exam-0.0.1-SNAPSHOT.jar" > /dev/null; then
+          ssh -i ~/.ssh/private.key ubuntu@3.66.171.180 "pkill -f exam-0.0.1-SNAPSHOT.jar"
+        else
+          echo "Process not found, no need to stop."
+        fi
+
+    - name: Remove Old JAR
+      run: |
+        ssh -i ~/.ssh/private.key ubuntu@3.66.171.180 "rm -f /home/ubuntu/exam-0.0.1-SNAPSHOT.jar"
+
+    - name: Deploy the New JAR
+      run: |
+        scp -i ~/.ssh/private.key target/exam-0.0.1-SNAPSHOT.jar ubuntu@3.66.171.180:/home/ubuntu/
+        
+    - name: Start the New Application in Background
+      run: |
+        ssh -i ~/.ssh/private.key ubuntu@3.66.171.180 "nohup java -jar /home/ubuntu/exam-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
