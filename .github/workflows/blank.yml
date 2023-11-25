@@ -40,9 +40,9 @@ jobs:
           echo "Process not found, no need to stop."
         fi
 
-    - name: Remove Old JAR
-      run: |
-        ssh -i ~/.ssh/private.key project@3.70.99.247 "rm -f /home/project/exam-0.0.1-SNAPSHOT.jar"
+    # - name: Remove Old JAR
+    #   run: |
+    #     ssh -i ~/.ssh/private.key project@3.70.99.247 "rm -f /home/project/exam-0.0.1-SNAPSHOT.jar"
 
     - name: Deploy the New JAR
       run: |
