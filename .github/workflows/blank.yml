@@ -46,8 +46,8 @@ jobs:
 
     - name: Deploy the New JAR
       run: |
-        scp -i ~/.ssh/private.key target/exam-0.0.1-SNAPSHOT.jar ec2-user@51.20.85.15:/home/ubuntu/
+        scp -i ~/.ssh/private.key target/exam-0.0.1-SNAPSHOT.jar ec2-user@51.20.85.15:/home/
         
     - name: Start the New Application in Background
       run: |
-        ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "nohup java -jar /home/ubuntu/exam-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
+        ssh -i ~/.ssh/private.key ec2-user@51.20.85.15 "nohup java -jar /home/exam-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"
