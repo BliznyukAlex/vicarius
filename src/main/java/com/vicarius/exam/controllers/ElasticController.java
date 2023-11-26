@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -17,10 +16,10 @@ public class ElasticController {
         this.examDocService = examDocService;
     }
 
-    @PostMapping("/index")
-    public ResponseEntity<?> createIndex(@RequestBody Map<String, Object> indexConfig) {
+    @PostMapping("/index/{indexName}")
+    public ResponseEntity<?> createIndex(@PathVariable String indexName) {
         try {
-            return ResponseEntity.ok(examDocService.createIndex(indexConfig));
+            return ResponseEntity.ok(examDocService.createIndex(indexName));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating index");
         }
@@ -30,16 +29,16 @@ public class ElasticController {
     public ResponseEntity<?> addDocument(@PathVariable String indexName, @RequestBody Map<String, Object> document) {
         try {
             return ResponseEntity.ok(examDocService.addDocument(indexName, document));
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding document: " + e.getMessage());
         }
     }
 
     @GetMapping("/index/{indexName}/document/{documentId}")
-    public ResponseEntity getDocumentById(@PathVariable String indexName, @PathVariable String documentId) {
+    public ResponseEntity<?> getDocumentById(@PathVariable String indexName, @PathVariable String documentId) {
         try {
             return ResponseEntity.ok(examDocService.getDocumentById(indexName, documentId));
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting document: " + e.getMessage());
         }
     }
